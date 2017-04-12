@@ -7,6 +7,7 @@ def main():
     sick = reader.SICK("/mnt/hdd/dataset/SICK/semeval2014-task1")
     snli = reader.SNLI("/mnt/hdd/dataset/Stanford-Natural-Language-Inference/snli_1.0")
     sst = reader.SST("/mnt/hdd/dataset/Stanford-Sentiment-Treebank/stanfordSentimentTreebank/trees")
+    mscoco = reader.MSCOCO("/mnt/hdd1/dataset/COCO/", "./")
 
     print "Done."
 

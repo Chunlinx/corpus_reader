@@ -12,18 +12,18 @@ class MSCOCO(object):
     """
     Karpathy ver.
     """
-    def __init__(self, path):
-        self.load_dataset(path)
+    def __init__(self, path, path_vgg_feats):
+        self.load_dataset(path, path_vgg_feats)
 
-    def load_dataset(self, path):
+    def load_dataset(self, path, path_vgg_feats):
         vgg_feats = sio.loadmat(os.path.join(path, "..", "karpathy", "coco", "vgg_feats.mat"))
         vgg_feats = vgg_feats["feats"].transpose(1, 0)
         
         self.images = {"train": [], "val": [], "test": []}
         self.captions = {"train": [], "val": [], "test": []}
-        hdf5Files = {"train": h5py.File("vgg_feats.train.h5", "w"),
-                    "val": h5py.File("vgg_feats.val.h5", "w"),
-                    "test": h5py.File("vgg_feats.test.h5", "w")}
+        hdf5Files = {"train": h5py.File(os.path.join(path_vgg_feats, "vgg_feats.train.h5"), "w"),
+                    "val": h5py.File(os.path.join(path_vgg_feats, "vgg_feats.val.h5"), "w"),
+                    "test": h5py.File(os.path.join(path_vgg_feats, "vgg_feats.test.h5"), "w")}
 
         with open(os.path.join(path, "..", "karpathy", "coco", "dataset.json")) as f:
             data = json.load(f)
