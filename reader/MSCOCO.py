@@ -23,7 +23,7 @@ class MSCOCO(object):
         vgg_feats = sio.loadmat(os.path.join(path, "..", "karpathy", "coco", "vgg_feats.mat"))
         vgg_feats = vgg_feats["feats"].transpose(1, 0)
         
-        self.images = {"train": [], "val": [], "test": []}
+        self.names = {"train": [], "val": [], "test": []}
         self.captions = {"train": [], "val": [], "test": []}
         hdf5File_train = h5py.File(os.path.join(path_vgg_feats, "vgg_feats.train.h5"), "w")
         hdf5File_val = h5py.File(os.path.join(path_vgg_feats, "vgg_feats.val.h5"), "w")
@@ -50,21 +50,21 @@ class MSCOCO(object):
                 if split == u"train" or split == u"restval":
                     for cap in captions:
                         cap = " ".join(cap["tokens"])
-                        self.images["train"].append(path_img)
+                        self.names["train"].append(path_img)
                         self.captions["train"].append(cap)
-                        hdf5data_train[len(self.images["train"])-1,:] = feats
+                        hdf5data_train[len(self.names["train"])-1,:] = feats
                 elif split == u"val":
                     for cap in captions:
                         cap = " ".join(cap["tokens"])
-                        self.images["val"].append(path_img)
+                        self.names["val"].append(path_img)
                         self.captions["val"].append(cap)
-                        hdf5data_val[len(self.images["val"])-1,:] = feats
+                        hdf5data_val[len(self.names["val"])-1,:] = feats
                 elif split == u"test":
                     for cap in captions:
                         cap = " ".join(cap["tokens"])
-                        self.images["test"].append(path_img)
+                        self.names["test"].append(path_img)
                         self.captions["test"].append(cap)
-                        hdf5data_test[len(self.images["test"])-1,:] = feats
+                        hdf5data_test[len(self.names["test"])-1,:] = feats
         
         hdf5File_train.flush()
         hdf5File_train.close()
@@ -79,7 +79,7 @@ class MSCOCO(object):
                 "test": h5py.File(os.path.join(path_vgg_feats, "vgg_feats.test.h5"), "r")}
 
     def get_data(self, split):
-        return self.images[split], self.hdf5Files[split]["data"], self.captions[split]
+        return self.names[split], self.hdf5Files[split]["data"], self.captions[split]
 
 
 # class MSCOCO(object):
