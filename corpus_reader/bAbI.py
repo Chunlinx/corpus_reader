@@ -6,6 +6,7 @@ import os
 class BABI(object):
 
     def __init__(self, path, task_id):
+        assert task_id in range(1, 21)
         self.load_dataset(path, task_id)
 
     def load_dataset(self, path, task_id):
@@ -14,6 +15,7 @@ class BABI(object):
         assert len(filenames) == 2
         path_train = os.path.join(path, [n for n in filenames if "train" in n][0])
         path_test = os.path.join(path, [n for n in filenames if "test" in n][0])
+
         episodes_train = self.load_split(path_train)
         episodes_test = self.load_split(path_test)
         self.episodes = {
@@ -26,7 +28,7 @@ class BABI(object):
         """
         episodes = []
         episode = None
-        for i, line in enumerate(open(path)):
+        for line in open(path):
             sent_id = int(line[0:line.find(" ")])
             if sent_id == 1:
                 # new episode

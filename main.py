@@ -8,7 +8,8 @@ def main():
     snli = corpus_reader.SNLI("/mnt/hdd/dataset/Stanford-Natural-Language-Inference/snli_1.0")
     sst = corpus_reader.SST("/mnt/hdd/dataset/Stanford-Sentiment-Treebank/stanfordSentimentTreebank/trees")
     mscoco = corpus_reader.MSCOCO("/mnt/hdd1/dataset/COCO/coco", "./")
-    babi = corpus_reader.BABI("/mnt/hdd/dataset/bAbI/tasks_1-20_v1-2/en-10k/", task_id=3)
+    babi = corpus_reader.BABI("/mnt/hdd/dataset/bAbI/tasks_1-20_v1-2/en/", task_id=3)
+    cbt = corpus_reader.CBT("/mnt/hdd/dataset/ChildrensBookTest/CBTest", word_type="NE")
 
     print "Done."
 

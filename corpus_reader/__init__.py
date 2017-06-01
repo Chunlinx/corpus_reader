@@ -4,3 +4,4 @@ from SNLI import SNLI
 from SST import SST
 from MSCOCO import MSCOCO
 from bAbI import BABI
+from CBT import CBT
