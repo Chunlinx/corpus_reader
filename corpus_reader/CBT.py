@@ -33,7 +33,7 @@ class CBT(object):
                     "candidates": None}
         for line in open(path):
             # skip empty lines
-            line = line.strip()
+            line = line.decode("utf-8").strip()
             if line == "":
                 continue
             # extract a sentence ID

@@ -29,12 +29,14 @@ class BABI(object):
         episodes = []
         episode = None
         for line in open(path):
+            line = line.decode("utf-8")
             sent_id = int(line[0:line.find(" ")])
             if sent_id == 1:
                 # new episode
                 episode = {"context": [],
                             "question": None,
-                            "answer": None}
+                            "answer": None,
+                            "supports": None}
             line = line.strip().replace(".", " . ").replace("?", " ? ")
             content = line[line.find(" ")+1:]
             if content.find("?") == -1:
@@ -46,7 +48,7 @@ class BABI(object):
                 assert len(content) == 3
                 episode["question"] = content[0].strip()
                 episode["answer"] = content[1].strip()
-                episode["supports"] = content[2].split()
+                episode["supports"] = map(int, content[2].split())
                 episodes.append(copy.deepcopy(episode))
         return episodes
 
