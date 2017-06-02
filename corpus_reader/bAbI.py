@@ -28,6 +28,7 @@ class BABI(object):
         """
         episodes = []
         episode = None
+        supports_map = {}
         for line in open(path):
             line = line.decode("utf-8")
             sent_id = int(line[0:line.find(" ")])
@@ -37,18 +38,21 @@ class BABI(object):
                             "question": None,
                             "answer": None,
                             "supports": None}
+                supports_map = {}
             line = line.strip().replace(".", " . ").replace("?", " ? ")
             content = line[line.find(" ")+1:]
             if content.find("?") == -1:
                 # context
                 episode["context"].append(content.strip())
+                supports_map[sent_id] = len(supports_map)
             else:
                 # question & answers
                 content = content.split("\t")
                 assert len(content) == 3
                 episode["question"] = content[0].strip()
                 episode["answer"] = content[1].strip()
-                episode["supports"] = map(int, content[2].split())
+                episode["supports"] = [int(x) for x in content[2].split()]
+                episode["supports"] = [supports_map[x] for x in episode["supports"]]
                 episodes.append(copy.deepcopy(episode))
         return episodes
 
