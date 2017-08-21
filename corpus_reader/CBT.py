@@ -3,6 +3,9 @@
 import os
 
 class CBT(object):
+    """
+    Children's Book Test corpus
+    """
 
     def __init__(self, path, word_type):
         assert word_type in ["NE", "CN", "V", "P"]

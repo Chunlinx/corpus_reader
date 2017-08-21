@@ -7,7 +7,7 @@ def main():
     sick = corpus_reader.SICK("/mnt/hdd/dataset/SICK/semeval2014-task1")
     snli = corpus_reader.SNLI("/mnt/hdd/dataset/Stanford-Natural-Language-Inference/snli_1.0")
     sst = corpus_reader.SST("/mnt/hdd/dataset/Stanford-Sentiment-Treebank/stanfordSentimentTreebank/trees")
-    mscoco = corpus_reader.MSCOCO("/mnt/hdd1/dataset/COCO/coco", "./")
+    mscoco = corpus_reader.MSCOCO("/mnt/hdd1/dataset/COCO/coco", path_vgg_feats="./")
     babi = corpus_reader.BABI("/mnt/hdd/dataset/bAbI/tasks_1-20_v1-2/en/", task_id=3)
     cbt = corpus_reader.CBT("/mnt/hdd/dataset/ChildrensBookTest/CBTest", word_type="NE")
 

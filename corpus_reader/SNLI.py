@@ -12,6 +12,9 @@ label2id = {
 id2label = {i:l for l,i in label2id.items()}
 
 class SNLI(object):
+    """
+    Stanford Natural Language Inference (SNLI) corpus
+    """
 
     def __init__(self, path):
         self.load_dataset(path)

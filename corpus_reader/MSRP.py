@@ -11,8 +11,9 @@ id2label = {i:l for l,i in label2id.items()}
 
 class MSRP(object):
     """
-    Microsoft Research Paraphrase Corpus
+    Microsoft Research Paraphrase corpus
     """
+
     def __init__(self, path):
         self.load_dataset(path)
 
@@ -42,7 +43,6 @@ class MSRP(object):
         self.labels = {
             "train": train_labels,
             "test": test_labels}
-
 
     def get_data(self, split):
         return self.sentences[split][0], self.sentences[split][1], self.labels[split]

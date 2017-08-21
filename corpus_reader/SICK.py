@@ -13,7 +13,7 @@ id2label = {i:l for l,i in label2id.items()}
 
 class SICK(object):
     """
-    Semantic relatedness
+    SICK corpus
     """
 
     def __init__(self, path):

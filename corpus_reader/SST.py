@@ -7,7 +7,7 @@ import pytreebank
 
 class SST(object):
     """
-    Sentiment analysis
+    Stanford Sentiment Treebank (SST) corpus
     """
     
     def __init__(self, path):

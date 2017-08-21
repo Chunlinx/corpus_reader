@@ -14,8 +14,9 @@ N_TEST = 25010
 
 class MSCOCO(object):
     """
-    Karpathy ver.
+    MS COCO dataset (Karpathy ver.)
     """
+
     def __init__(self, path, path_vgg_feats):
         self.load_dataset(path, path_vgg_feats)
 
