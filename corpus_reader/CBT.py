@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import cPickle as pkl
 import os
 
 class CBT(object):
@@ -9,6 +10,7 @@ class CBT(object):
 
     def __init__(self, path, word_type):
         assert word_type in ["NE", "CN", "V", "P"]
+        self.word_type = word_type
 
         filenames = os.listdir(os.path.join(path, "data"))
         path_train = os.path.join(path, "data", 
@@ -63,3 +65,8 @@ class CBT(object):
     def get(self, split):
         return self.data[split]
 
+    def dump(self, path_dir):
+        for split in ["train", "val", "test"]:
+            data = self.get(split)
+            pkl.dump(data, open(os.path.join(path_dir,
+                "cbt.type_%s.%s.pkl" % (self.word_type, split)), "wb"))

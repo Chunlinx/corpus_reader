@@ -5,6 +5,8 @@ import os
 import numpy as np
 import pandas as pd
 
+import utils
+
 label2id = {
     "ENTAILMENT": 0,
     "NEUTRAL": 1,
@@ -44,4 +46,18 @@ class SICK(object):
                 "test": test_scores}
 
     def get(self, split):
-        return self.sentences[split][0], self.sentences[split][1], self.labels[split], self.scores[split]
+        return self.sentences[split][0], \
+                self.sentences[split][1], \
+                self.labels[split], self.scores[split]
+
+    def dump(self, path_dir):
+        for split in ["train", "val", "test"]:
+            sents_p, sents_h, labels = self.get(split)
+            labels = [str(l) for l in labels]
+            utils.write_lines(sents_p,
+                os.path.join(path_dir, "sick.%s.premise.txt" % split))
+            utils.write_lines(sents_h,
+                os.path.join(path_dir, "sick.%s.hypothesis.txt" % split))
+            utils.write_lines(labels,
+                os.path.join(path_dir, "sick.%s.labels.txt" % split))
+

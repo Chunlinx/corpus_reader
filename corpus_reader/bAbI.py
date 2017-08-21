@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import cPickle as pkl
 import copy
 import os
 
@@ -7,6 +8,7 @@ class BABI(object):
 
     def __init__(self, path, task_id):
         assert task_id in range(1, 21)
+        self.task_id = task_id
 
         filenames = os.listdir(path)
         filenames = [n for n in filenames if n.startswith("qa%d_" % task_id)]
@@ -56,3 +58,10 @@ class BABI(object):
 
     def get(self, split):
         return self.episodes[split]
+
+    def dump(self, path_dir):
+        for split in ["train", "test"]:
+            episodes = self.get(split)
+            pkl.dump(episodes, open(os.path.join(path_dir,
+                "babi.task_%02d.%s.pkl" % (self.task_id, split)), "wb"))
+

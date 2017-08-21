@@ -79,63 +79,18 @@ class MSCOCO(object):
     def get(self, split):
         return self.image_names[split], self.hdf5Files[split]["data"], self.captions[split]
 
+    def dump(self, path_dir):
+        for split in ["train", "val", "test"]:
+            image_names, feats, captions = self.get(split)
+            f_nam = open(os.path.join(path_dir,
+                "image_names.%s.txt" % split), "w")
+            f_cap = open(os.path.join(path_dir,
+                "captions.%s.txt" % split), "w")
+            for i in xrange(len(image_names)):
+                f_nam.write("%s\n" % image_names[i].encode("utf-8"))
+                f_cap.write("%s\n" % captions[i].encode("utf-8"))
+            f_nam.flush()
+            f_nam.close()
+            f_cap.flush()
+            f_cap.close()
 
-# class MSCOCO(object):
-#     def __init__(self, path):
-#         sys.path.append(os.path.join(path, "PythonAPI"))
-#         self.load_dataset(path)
-#
-#     def load_dataset(self, path):
-#         self.images = {}
-#         self.captions = {}
-#         self.images["train"], self.captions["train"] = self.process_split(path, split="train2014")
-#         self.images["val"], self.captions["val"] = self.process_split(path, split="val2014")
-#
-#     def process_split(self, path, split):
-#         from pycocotools.coco import COCO
-#         coco_ann = COCO(os.path.join(path, "annotations", "instances_%s.json" % split))
-#         coco_cap = COCO(os.path.join(path, "annotations", "captions_%s.json" % split))
-#        
-#         cats = coco_ann.loadCats(coco_ann.getCatIds())
-#         cat_names = [x["name"] for x in cats]
-#         supercat_names = list(set([x["supercategory"] for x in cats]))
-#         cat_names = cat_names + supercat_names
-#
-#         dataset = {} # (image name) -> (caption)
-#         for cat_name in cat_names:
-#             catIds = coco_ann.getCatIds(catNms=[cat_name])
-#             imgIds = coco_ann.getImgIds(catIds=catIds)
-#             img_info_list = coco_ann.loadImds(imgIds)
-#
-#             for img_info in img_info_list:
-#                 # get image path
-#                 path_img = os.path.join(path, "images", split, img_info["file_name"])
-#
-#                 # # img = cv2.imread(os.path.join(path, "images", split, img_info["file_name"]))
-#                 # img = io.imread(os.path.join(path, "images", split, img_info["file_name"]))
-#                 # plt.figure()
-#                 # plt.imshow(img)
-#                 # plt.show()
-#
-#                 annIds = coco_cap.getAnnIds(imgIds=img_info["id"])
-#                 anns = coco_cap.loadAnns(annIds)
-#                 caps = [ann[u"caption"] for ann in anns]
-#                 if dataset.has_key(path_img):
-#                     dataset[path_img].extend(caps)
-#                 else:
-#                     dataset[path_img] = caps
-#
-#         for path_img in dataset.keys():
-#             dataset[path_img] = list(set(dataset[path_img]))
-#             assert 1 <= len(dataset[path_img]) <= 5
-#
-#         self.images = []
-#         self.captions = []
-#         for path_img, caps in dataset.items():
-#             self.images.append(path_img)
-#             for cap in caps:
-#                 self.images.append(path_img)
-#                 self.captions.append(cap)
-#
-#     def get_data(self, split):
-#         return self.images[split], self.captions[split]

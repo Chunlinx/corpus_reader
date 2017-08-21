@@ -42,3 +42,12 @@ class SST(object):
 
     def get(self, split):
         return self.sentences[split], self.labels[split]
+
+    def dump(self, path_dir):
+        for split in ["train", "val", "test"]:
+            sents, labels = self.get(split)
+            labels = [str(l) for l in labels]
+            utils.write_lines(sents,
+                os.path.join(path_dir, "sst.%s.sentences.txt" % split))
+            utils.write_lines(labels,
+                os.path.join(path_dir, "sst.%s.labels.txt" % split))

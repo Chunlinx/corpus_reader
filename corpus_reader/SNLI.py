@@ -5,6 +5,8 @@ import os
 
 import numpy as np
 
+import utils
+
 label2id = {
     "entailment": 0,
     "neutral": 1,
@@ -57,4 +59,15 @@ class SNLI(object):
 
     def get(self, split):
         return self.sentences[split][0], self.sentences[split][1], self.labels[split]
+
+    def dump(self, path_dir):
+        for split in ["train", "val", "test"]:
+            sents_p, sents_h, labels = self.get(split)
+            labels = [str(l) for l in labels]
+            utils.write_lines(sents_p,
+                os.path.join(path_dir, "snli.%s.premise.txt" % split))
+            utils.write_lines(sents_h,
+                os.path.join(path_dir, "snli.%s.hypothesis.txt" % split))
+            utils.write_lines(labels,
+                os.path.join(path_dir, "snli.%s.labels.txt" % split))
 

@@ -4,6 +4,8 @@ import os
 
 import numpy as np
 
+import utils
+
 label2id = {
     "non-paraphrase": 0,
     "paraphrase": 1}
@@ -42,5 +44,18 @@ class MSRP(object):
             "test": test_labels}
 
     def get(self, split):
-        return self.sentences[split][0], self.sentences[split][1], self.labels[split]
+        return self.sentences[split][0], \
+                self.sentences[split][1], \
+                self.labels[split]
+
+    def dump(self, path_dir):
+        for split in ["train", "test"]:
+            sents_A, sents_B, labels = self.get(split)
+            labels = [str(l) for l in labels]
+            utils.write_lines(sents_A,
+                os.path.join(path_dir, "msrp.%s.arg1.txt" % split))
+            utils.write_lines(sents_B,
+                os.path.join(path_dir, "msrp.%s.arg2.txt" % split))
+            utils.write_lines(labels,
+                os.path.join(path_dir, "msrp.%s.labels.txt" % split))
 
