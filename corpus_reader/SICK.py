@@ -48,16 +48,20 @@ class SICK(object):
     def get(self, split):
         return self.sentences[split][0], \
                 self.sentences[split][1], \
-                self.labels[split], self.scores[split]
+                self.labels[split], \
+                self.scores[split]
 
     def dump(self, path_dir):
         for split in ["train", "val", "test"]:
-            sents_p, sents_h, labels = self.get(split)
+            sents_p, sents_h, labels, scores = self.get(split)
             labels = [str(l) for l in labels]
+            scores = [str(s) for s in scores]
             utils.write_lines(sents_p,
                 os.path.join(path_dir, "sick.%s.premise.txt" % split))
             utils.write_lines(sents_h,
                 os.path.join(path_dir, "sick.%s.hypothesis.txt" % split))
             utils.write_lines(labels,
                 os.path.join(path_dir, "sick.%s.labels.txt" % split))
+            utils.write_lines(scores,
+                os.path.join(path_dir, "sick.%s.scores.txt" % split))
 
