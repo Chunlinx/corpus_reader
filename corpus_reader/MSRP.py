@@ -15,9 +15,6 @@ class MSRP(object):
     """
 
     def __init__(self, path):
-        self.load_dataset(path)
-
-    def load_dataset(self, path):
         def load_split(path, split):
             labels, sents_A, sents_B = [], [], []
             lines = open(os.path.join(path, "msr_paraphrase_%s.txt" % split)).readlines()
@@ -44,6 +41,6 @@ class MSRP(object):
             "train": train_labels,
             "test": test_labels}
 
-    def get_data(self, split):
+    def get(self, split):
         return self.sentences[split][0], self.sentences[split][1], self.labels[split]
 

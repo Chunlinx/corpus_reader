@@ -9,9 +9,7 @@ class CBT(object):
 
     def __init__(self, path, word_type):
         assert word_type in ["NE", "CN", "V", "P"]
-        self.load_dataset(path, word_type)
 
-    def load_dataset(self, path, word_type):
         filenames = os.listdir(os.path.join(path, "data"))
         path_train = os.path.join(path, "data", 
             [n for n in filenames if n.startswith("cbtest_%s_train" % word_type)][0])
@@ -62,6 +60,6 @@ class CBT(object):
                 example["context"].append(content.strip())
         return data
 
-    def get_data(self, split):
+    def get(self, split):
         return self.data[split]
 

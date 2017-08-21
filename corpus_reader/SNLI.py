@@ -17,10 +17,6 @@ class SNLI(object):
     """
 
     def __init__(self, path):
-        self.load_dataset(path)
-
-    def load_dataset(self, path):
-
         def process_binary_parse(parse):
             # words = parse.split()
             # words = [w for w in words if not w in ["(", ")"]]
@@ -59,6 +55,6 @@ class SNLI(object):
                 "val": val_labels,
                 "test": test_labels}
 
-    def get_data(self, split):
+    def get(self, split):
         return self.sentences[split][0], self.sentences[split][1], self.labels[split]
 

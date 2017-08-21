@@ -7,9 +7,7 @@ class BABI(object):
 
     def __init__(self, path, task_id):
         assert task_id in range(1, 21)
-        self.load_dataset(path, task_id)
 
-    def load_dataset(self, path, task_id):
         filenames = os.listdir(path)
         filenames = [n for n in filenames if n.startswith("qa%d_" % task_id)]
         assert len(filenames) == 2
@@ -56,5 +54,5 @@ class BABI(object):
                 episodes.append(copy.deepcopy(episode))
         return episodes
 
-    def get_data(self, split):
+    def get(self, split):
         return self.episodes[split]

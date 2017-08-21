@@ -17,9 +17,6 @@ class SICK(object):
     """
 
     def __init__(self, path):
-        self.load_dataset(path)
-
-    def load_dataset(self, path):
         def load_split(filename):
             data = pd.read_csv(os.path.join(path, filename), sep="\t", header=0)
             sents_A = data["sentence_A"].values
@@ -46,5 +43,5 @@ class SICK(object):
                 "val": val_scores,
                 "test": test_scores}
 
-    def get_data(self, split):
+    def get(self, split):
         return self.sentences[split][0], self.sentences[split][1], self.labels[split], self.scores[split]

@@ -11,9 +11,6 @@ class SST(object):
     """
     
     def __init__(self, path):
-        self.load_dataset(path)
-
-    def load_dataset(self, path):
         def load_split(path, split):
             data = pytreebank.import_tree_corpus(os.path.join(path, "%s.txt" % split))
             labels, sentences = [], []
@@ -43,5 +40,5 @@ class SST(object):
                 "val": val_labels,
                 "test": test_labels}
 
-    def get_data(self, split):
+    def get(self, split):
         return self.sentences[split], self.labels[split]

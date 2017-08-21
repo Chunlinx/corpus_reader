@@ -18,9 +18,6 @@ class MSCOCO(object):
     """
 
     def __init__(self, path, path_vgg_feats):
-        self.load_dataset(path, path_vgg_feats)
-
-    def load_dataset(self, path, path_vgg_feats):
         vgg_feats = sio.loadmat(os.path.join(path, "..", "karpathy", "coco", "vgg_feats.mat"))
         vgg_feats = vgg_feats["feats"].transpose(1, 0)
         
@@ -79,7 +76,7 @@ class MSCOCO(object):
                 "val": h5py.File(os.path.join(path_vgg_feats, "vgg_feats.val.h5"), "r"),
                 "test": h5py.File(os.path.join(path_vgg_feats, "vgg_feats.test.h5"), "r")}
 
-    def get_data(self, split):
+    def get(self, split):
         return self.image_names[split], self.hdf5Files[split]["data"], self.captions[split]
 
 
