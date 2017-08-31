@@ -31,5 +31,9 @@ def main():
     mscoco = corpus_reader.MSCOCO("/mnt/hdd1/dataset/COCO/coco", path_vgg_feats="./")
     print "Done."
 
+    print "Loading Pascal Sentences dataset ..."
+    pascal = corpus_reader.PascalSentences(path_images="./pascal_sentences/images")
+    print "Done."
+
 if __name__ == "__main__":
     main()
