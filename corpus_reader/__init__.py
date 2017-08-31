@@ -5,3 +5,4 @@ from SST import SST
 from bAbI import BABI
 from CBT import CBT
 from MSCOCO import MSCOCO
+from PascalSentences import PascalSentences
