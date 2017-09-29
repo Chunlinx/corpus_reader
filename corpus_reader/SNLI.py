@@ -29,6 +29,7 @@ class SNLI(object):
 
         def load_split(path, filename):
             labels, sents_A, sents_B = [], [], []
+            image_names = []
             for line in open(os.path.join(path, filename)).readlines():
                 line = line.strip()
                 data = json.loads(line)
@@ -41,12 +42,17 @@ class SNLI(object):
                 sents_A.append(sent_A)
                 sents_B.append(sent_B)
                 labels.append(label)
+                image_name = data["captionID"]
+                index = image_name.rfind("jpg")
+                if index != -1:
+                    image_name = image_name[:index+3]
+                image_names.append(image_name) # XXX
             labels = np.asarray(labels, dtype="int")
-            return sents_A, sents_B, labels
+            return sents_A, sents_B, labels, image_names
 
-        train_sents_A, train_sents_B, train_labels = load_split(path, "snli_1.0_train.jsonl")
-        val_sents_A, val_sents_B, val_labels = load_split(path, "snli_1.0_dev.jsonl")
-        test_sents_A, test_sents_B, test_labels = load_split(path, "snli_1.0_test.jsonl")
+        train_sents_A, train_sents_B, train_labels, train_image_names = load_split(path, "snli_1.0_train.jsonl")
+        val_sents_A, val_sents_B, val_labels, val_image_names = load_split(path, "snli_1.0_dev.jsonl")
+        test_sents_A, test_sents_B, test_labels, test_image_names = load_split(path, "snli_1.0_test.jsonl")
 
         self.sentences = {
                 "train": (train_sents_A, train_sents_B),
@@ -56,13 +62,17 @@ class SNLI(object):
                 "train": train_labels,
                 "val": val_labels,
                 "test": test_labels}
+        self.image_names = {
+                "train": train_image_names,
+                "val": val_image_names,
+                "test": test_image_names}
 
     def get(self, split):
-        return self.sentences[split][0], self.sentences[split][1], self.labels[split]
+        return self.sentences[split][0], self.sentences[split][1], self.labels[split], self.image_names[split]
 
     def dump(self, path_dir):
         for split in ["train", "val", "test"]:
-            sents_p, sents_h, labels = self.get(split)
+            sents_p, sents_h, labels, image_names = self.get(split)
             labels = [str(l) for l in labels]
             utils.write_lines(sents_p,
                 os.path.join(path_dir, "snli.%s.premise.txt" % split))
@@ -70,4 +80,6 @@ class SNLI(object):
                 os.path.join(path_dir, "snli.%s.hypothesis.txt" % split))
             utils.write_lines(labels,
                 os.path.join(path_dir, "snli.%s.labels.txt" % split))
+            utils.write_lines(image_names,
+                os.path.join(path_dir, "snli.%s.image_names.txt" % split))
 
