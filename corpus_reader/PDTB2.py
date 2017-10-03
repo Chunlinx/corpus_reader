@@ -66,8 +66,8 @@ assert len(attribute_names) == 48
 # Following the paper of Braud & Denis (2015).
 sections_for_eachsplit = {
     "train": ["%02d" % i for i in xrange(2, 21)],
+    "test": ["21", "22"],
     "val": ["00", "01", "23", "24"],
-    "test": ["21", "22"]
 }
 
 class PDTB2(object):
