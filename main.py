@@ -39,5 +39,9 @@ def main():
     pascal = corpus_reader.PascalSentences(path_images="./pascal_sentences/images")
     print("Done.")
 
+    print("Loading Bllip dataset ...")
+    bllip = corpus_reader.BllipWithoutParseTrees("/mnt/hdd/dataset/Bllip/bllip_nanc_mem/data")
+    print("Done.")
+
 if __name__ == "__main__":
     main()
