@@ -26,6 +26,11 @@ class BllipWithoutParseTrees(object):
         dir_list.sort()
         for dir_name in dir_list:
             print("Processing %s ..." % os.path.join(self.path, dir_name))
+            # Error files: 271, 297, 299
+            if int(dir_name.split(".")[0]) in [271, 297, 299]:
+                print("Skipped.")
+                continue
+
             f = open(os.path.join(path_dir, dir_name + ".txt"), "w")
             file_names = os.listdir(os.path.join(self.path, dir_name))
             file_names.sort()
