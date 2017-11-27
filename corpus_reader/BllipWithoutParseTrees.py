@@ -42,8 +42,8 @@ class BllipWithoutParseTrees(object):
                 # Aggregate raw sentences
                 contents = OrderedDict()
                 for line in lines:
-                    # line = line.decode("utf-8").strip()
-                    line = line.strip()
+                    # line = line.strip()
+                    line = line.decode("latin8").strip()
                     if re_head.match(line):
                         match = re_head.findall(line)
                         match = match[0]
@@ -61,7 +61,7 @@ class BllipWithoutParseTrees(object):
                         continue
                 # Wtite
                 for key in contents.keys():
-                    f.write("%s\n" % contents[key])
+                    f.write("%s\n" % contents[key].encode("utf-8"))
                 f.flush()
             f.close()
 
