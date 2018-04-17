@@ -33,9 +33,9 @@ class BllipWithoutParseTrees(object):
         n_dirs = len(dir_list)
         
         # source materialごとの保存先ディレクトリ作成
-        for src in ["lat", "nyt", "reu", "wsj", "noname"]:
-            if not os.path.exists(os.path.join(path_dir, src)):
-                os.makedirs(os.path.join(path_dir, src))
+        for src_type in ["lat", "nyt", "reu", "wsj", "noname"]:
+            if not os.path.exists(os.path.join(path_dir, src_type)):
+                os.makedirs(os.path.join(path_dir, src_type))
         src_map = {
                 "lat": "lat",
                 "nyt": "nyt",
