@@ -5,6 +5,8 @@ from collections import OrderedDict
 import os
 import re
 
+import numpy as np
+
 import bllipparser
 import pyprind
 
@@ -31,10 +33,23 @@ class BllipWithoutParseTrees(object):
         n_dirs = len(dir_list)
         
         # source materialごとの保存先ディレクトリ作成
-        for src in ["lat", "nyt", "reu", "199", "noname"]:
+        for src in ["lat", "nyt", "reu", "wsj", "noname"]:
             if not os.path.exists(os.path.join(path_dir, src)):
                 os.makedirs(os.path.join(path_dir, src))
-        src_map = {w:w for w in ["lat", "nyt", "reu", "199"]}
+        src_map = {
+                "lat": "lat",
+                "nyt": "nyt",
+                "reu": "reu",
+                "199": "wsj", # 199*で始まるファイルはWSJ
+                "noname": "noname"}
+        output_id_map = {
+                "lat": -1,
+                "nyt": -1,
+                "reu": -1,
+                "199": -1,
+                "noname": -1}
+        cur_sentence_index = np.inf
+        cur_article_name = None
 
         for dir_i, dir_name in enumerate(pyprind.prog_bar(dir_list)):
             # Directories that contain error files: 271, 297, 299
@@ -45,14 +60,13 @@ class BllipWithoutParseTrees(object):
             file_names = os.listdir(os.path.join(self.path, dir_name))
             file_names.sort()
             n_files = len(file_names)
-            noname_count = 0
+
             for file_i, file_name in enumerate(file_names):
                 print("[%d/%d, %d/%d] %s ..." % (dir_i+1, n_dirs, file_i+1, n_files, os.path.join(self.path, dir_name, file_name)))
                 # Read 
-                articles = OrderedDict()
-                article_id_set = set()
                 bz_file = bz2.BZ2File(os.path.join(self.path, dir_name, file_name))
                 lines = bz_file.readlines()
+                cache = OrderedDict()
                 for line in lines:
                     # line = line.decode("latin8").strip()
                     line = line.strip()
@@ -61,44 +75,48 @@ class BllipWithoutParseTrees(object):
                         match = re_head.findall(line)
                         match = match[0]
                         # n_parses = int(match[0])
-                        article_id = match[1]
+                        article_name = match[1]
+                        if article_name == "":
+                            article_head = "noname"
+                        else:
+                            article_head = article_name[:3]
+                        output_dir = src_map[article_head]
                         sentence_index = int(match[2])
-                        articles["%s/%d" % (article_id, sentence_index)] = None
-                        article_id_set.add(article_id)
+                        
+                        # もしsentence_indexが振り出しに戻ったら(e.g., 0 or 1), 新しいファイル名とする
+                        # あるいはarticle_nameが変わったら, 新しいファイル名とする
+                        if sentence_index < cur_sentence_index:
+                            output_id_map[article_head] += 1
+                            output_name = "%06d.txt" % output_id_map[article_head]
+                        elif article_name != cur_article_name:
+                            output_id_map[article_head] += 1
+                            output_name = "%06d.txt" % output_id_map[article_head]
+                        else:
+                            output_name = "%06d.txt" % output_id_map[article_head]
+                        cur_sentence_index = sentence_index
+                        cur_article_name = article_name
+
+                        cache["%s/%d" % (output_name, sentence_index)] = False
                     elif re_tree.match(line):
                         # 文. まだassignしてなければ読み込み，既にしてればスルー.
-                        if articles["%s/%d" % (article_id, sentence_index)] is None:
+                        if not cache["%s/%d" % (output_name, sentence_index)]:
                             # まだassignしてなければ読み込む
                             tree = bllipparser.Tree(line)
                             tokens = tree.tokens()
                             raw_sent = " ".join(tokens)
                             raw_sent = raw_sent.replace("-LRB-", "(").replace("-RRB-", ")")
-                            articles["%s/%d" % (article_id, sentence_index)] = raw_sent.decode("latin8")
+                            # Write
+                            with open(os.path.join(path_dir, output_dir, output_name), "a") as f:
+                                sent = raw_sent.decode("latin8")
+                                sent = sent.encode("utf-8")
+                                if self.debug_mode:
+                                    sent = "[%s] %s" % (sentence_index, sent)
+                                f.write("%s\n" % sent)
+                            cache["%s/%d" % (output_name, sentence_index)] = True
                         else:
                             # 既にassignしてれば何もしない (計算コストの節約)
                             continue
                     else:
                         # 恐らくparseスコア
                         continue
-                # Wtite
-                for article_id in article_id_set:
-                    if article_id != "":
-                        output_name = article_id + ".txt"
-                        output_dir = src_map.get(article_id[:3], "noname")
-                    else:
-                        # in the case of dir_name in ["484", 485", "486", "487", "488", "489", "490", "491", "492", "493", "494", "495", "496", "497", "498", "499", "500", "501", "502", "503"]
-                        output_name = "%s.02d.txt" % (dir_name, noname_count)
-                        noname_count += 1
-                        output_dir = "noname"
-                    with open(os.path.join(path_dir, output_dir, output_name), "a") as f:
-                        for key in articles:
-                            key0, key1 = key.split("/")
-                            if key0 == article_id:
-                                s = articles[key]
-                                if self.debug_mode:
-                                    line = "[%s] %s" % (key1, s) # DEBUG
-                                else:
-                                    line = s
-                                f.write("%s\n" % line.encode("utf-8"))
-
 
