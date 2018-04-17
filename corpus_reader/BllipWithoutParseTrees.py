@@ -15,9 +15,9 @@ class BllipWithoutParseTrees(object):
     Ignore parse trees
     """
 
-    def __init__(self, path):
+    def __init__(self, path, debug_mode=False):
         self.path = path
-        pass
+        self.debug_mode = debug_mode
 
     def dump(self, path_dir):
         # e.g., 50 reute9406_007.0356_13
@@ -28,17 +28,26 @@ class BllipWithoutParseTrees(object):
         re_tree = re.compile(r"^\(.*\)$")
         dir_list = os.listdir(self.path)
         dir_list.sort()
-        for dir_name in pyprind.prog_bar(dir_list):
-            if not os.path.exists(os.path.join(path_dir, dir_name)):
-                os.makedirs(os.path.join(path_dir, dir_name))
+        n_dirs = len(dir_list)
+        
+        # source materialごとの保存先ディレクトリ作成
+        for src in ["lat", "nyt", "reu", "199", "noname"]:
+            if not os.path.exists(os.path.join(path_dir, src)):
+                os.makedirs(os.path.join(path_dir, src))
+        src_map = {w:w for w in ["lat", "nyt", "reu", "199"]}
+
+        for dir_i, dir_name in enumerate(pyprind.prog_bar(dir_list)):
             # Directories that contain error files: 271, 297, 299
-            if int(dir_name.split(".")[0]) in [271, 297, 299]:
+            if int(dir_name) in [271, 297, 299]:
                 print("Skipped.")
                 continue
+
             file_names = os.listdir(os.path.join(self.path, dir_name))
             file_names.sort()
-            for file_name in file_names:
-                print("Processing %s ..." % os.path.join(self.path, dir_name, file_name))
+            n_files = len(file_names)
+            noname_count = 0
+            for file_i, file_name in enumerate(file_names):
+                print("[%d/%d, %d/%d] %s ..." % (dir_i+1, n_dirs, file_i+1, n_files, os.path.join(self.path, dir_name, file_name)))
                 # Read 
                 articles = OrderedDict()
                 article_id_set = set()
@@ -73,13 +82,23 @@ class BllipWithoutParseTrees(object):
                         continue
                 # Wtite
                 for article_id in article_id_set:
-                    with open(os.path.join(path_dir, dir_name, article_id + ".txt"), "w") as f:
+                    if article_id != "":
+                        output_name = article_id + ".txt"
+                        output_dir = src_map.get(article_id[:3], "noname")
+                    else:
+                        # in the case of dir_name in ["484", 485", "486", "487", "488", "489", "490", "491", "492", "493", "494", "495", "496", "497", "498", "499", "500", "501", "502", "503"]
+                        output_name = "%s.02d.txt" % (dir_name, noname_count)
+                        noname_count += 1
+                        output_dir = "noname"
+                    with open(os.path.join(path_dir, output_dir, output_name), "a") as f:
                         for key in articles:
                             key0, key1 = key.split("/")
                             if key0 == article_id:
                                 s = articles[key]
-                                # line = "[%s] %s" % (key1, s) # DEBUG
-                                line = s
+                                if self.debug_mode:
+                                    line = "[%s] %s" % (key1, s) # DEBUG
+                                else:
+                                    line = s
                                 f.write("%s\n" % line.encode("utf-8"))
 
 
